@@ -10,12 +10,11 @@ export class ProductService extends ServiceBase {
     }
 
 
-    static getProductById = async (id: number) => {
-    const productResp = await fetch(this.getUrl(`/products/${id}`));
-    const product = await productResp.json();
-    return product;
+    static getProductById = async(id:number) => {
+        var productResp = await fetch(this.getUrl(`/products/${id}`));
+        var product = await productResp.json();
+        return product;
     }
-
 
     static getProductsByCategory = async (category: string) => {
     const productResp = await fetch(this.getUrl(`/products/category/${category}`));
