@@ -1,7 +1,7 @@
 export abstract class ServiceBase {
-    static API_URL = "https://fakestoreapi.com"
+  static API_URL = "https://fakestoreapi.com";
 
-    static getUrl(path:string): string {
-        return `${this.API_URL}${path}`;
-    }
+  static getUrl(path: string): string {
+    return `${this.API_URL}${path}`;
+  }
 }

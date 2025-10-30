@@ -1,32 +1,37 @@
 import { cookies, headers } from "next/headers";
 
+// ✅ GET request handler
+export async function GET() {
+  const data = [
+    { id: 1, title: "T-Shirts" },
+  ];
 
-export async function GET(request: Request) {
-    const data = [{
-        id:1,
-        title: 'T-Shirts'
-    }];
+  const cookieList = await cookies();
+  const tokenCookie = cookieList.get("authToken");
+  console.log("Token Cookie (GET):", tokenCookie);
 
-    const cookieList = await cookies();
-    const tokenCookie = cookieList.get('authToken');
-    console.log("tokenCookie :", tokenCookie)
-  return Response.json({ data })
+  return Response.json({ data });
 }
 
-export async function POST(request: Request){
-    const prod = await request.json();
-    const cookieList = await cookies();
-    const tokenCookie = cookieList.get('authToken');
-    console.log("tokenCookie :", tokenCookie);
+// ✅ POST request handler
+export async function POST(request: Request) {
+  const prod = await request.json();
 
-    const headerList = await headers();
-    console.log("Authorization", headerList.get('Authorization'));
+  const cookieList = await cookies();
+  const tokenCookie = cookieList.get("authToken");
+  console.log("Token Cookie (POST):", tokenCookie);
 
-    const data = [{
-        id:1,
-        title: 'T-Shirt',
-        prod: prod
-    }];
+  // ✅ must await headers() inside route handlers
+  const headerList = await headers();
+  console.log("Authorization Header:", headerList.get("Authorization"));
 
-    return Response.json({ data })
+  const data = [
+    {
+      id: 1,
+      title: "T-Shirt",
+      prod,
+    },
+  ];
+
+  return Response.json({ data });
 }

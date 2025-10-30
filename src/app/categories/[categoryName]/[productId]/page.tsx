@@ -2,16 +2,19 @@ import ProductCard from "@/app/component/product-card/ProductCard";
 import { ProductService } from "@/app/services/product-services";
 
 interface CategoryProductProps {
-  params: {
+  params: Promise<{
     categoryName: string;
     productId?: string;
-  };
+  }>;
 }
 
 export default async function CategoryProduct({ params }: CategoryProductProps) {
-  const categoryName = decodeURIComponent(params.categoryName);
-  const productId = params.productId;
-  let productList: { id: number; title: string; image: string }[] = [];
+  const resolvedParams = await params;
+  const categoryName = decodeURIComponent(resolvedParams.categoryName);
+  const productId = resolvedParams.productId;
+  
+  // Fix: Add proper type with price property
+  let productList: { id: number; title: string; image: string; price: number }[] = [];
 
   if (categoryName) {
     productList = await ProductService.getProductsByCategory(categoryName);

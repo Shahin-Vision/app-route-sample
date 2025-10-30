@@ -1,32 +1,103 @@
-import { ProductService } from '@/app/services/product-services';
-import React from 'react';
+"use client";
 
-export async function generateMetadata(props:any){
-  console.log("generateMetaData: ", props);
-  const productId = props.params.productId;
-  var product;
-  if(productId){
-    product = await ProductService.getProductById(productId);
-    return {
-      title: product.title
+import { useEffect, useState, use } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/app/context/CartContext";
+import { ProductService } from "@/app/services/product-services";
+import GotoCartButton from "@/app/component/GotoCartButton";
+
+interface ProductDetailPageProps {
+  params: Promise<{
+    productId: string;
+  }>;
+}
+
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+}
+
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  // ✅ unwrap params Promise (required in Next.js 15)
+  const resolvedParams = use(params);
+  const productId = resolvedParams.productId;
+
+  const { addToCart } = useCart();
+  const router = useRouter();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const data = await ProductService.getProductById(Number(productId));
+        setProduct(data);
+      } catch (error) {
+        console.error("Error loading product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [productId]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product);
+      router.push("/carts");
     }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center mt-5">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-2">Loading product details...</p>
+      </div>
+    );
   }
-  return {
-    title:"Product Detail Page"
+
+  if (!product) {
+    return (
+      <div className="text-center mt-5">
+        <h4>Product not found.</h4>
+      </div>
+    );
   }
-}
 
-export default async function ProductDetail (props: any) {
+  return (
+    <div className="container mt-4">
+      <GotoCartButton />
+      <div className="row align-items-center">
+        <div className="col-md-5 text-center">
+          {/* ✅ Fixed Next.js Image usage */}
+          <Image
+            src={product.image}
+            alt={product.title}
+            width={400}
+            height={400}
+            className="img-fluid rounded shadow-sm"
+            priority
+          />
+        </div>
 
-const {productId} = await props.params;
-var product;
+        <div className="col-md-7">
+          <h2>{product.title}</h2>
+          <p className="text-muted">{product.category}</p>
+          <p>{product.description}</p>
+          <h4 className="fw-bold">Price: ₹{product.price}</h4>
 
-if (productId) {
-    product = await ProductService.getProductById(productId)
-}
-
-return (<div>
-    <h3>{product.title}</h3>
-</div>
-)
+          <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
