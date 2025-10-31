@@ -1,46 +1,67 @@
 import { Metadata } from "next";
-import ProductCard from "../component/product-card/ProductCard";
-import { ProductService } from "../services/product-services";
 import { cookies, headers } from "next/headers";
-import GotoCartButton from "../component/GotoCartButton";
-import Link from "next/link";
 import { Suspense } from "react";
+import { ProductService } from "../services/product-services";
 import ProductList from "../component/ProductList";
+import ProductCard from "../component/product-card/ProductCard";
+import GotoCartButton from "../component/GotoCartButton";
 
-async function getProducts() {
-  const productResp = await ProductService.getProducts();
-  return productResp;
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  description: string;
 }
 
 export const metadata: Metadata = {
-  title:"Products List Page"
+  title: "Products List Page",
+  description: "Browse all available products",
+};
+
+async function getProducts(): Promise<Product[]> {
+  try {
+    const productResp = await ProductService.getProducts();
+    return productResp;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
 }
 
-export default async function products(props:any) {
+export default async function ProductsPage() {
   const products = await getProducts();
 
-  console.log("Products page executed", props);
   const cookieList = await cookies();
-  const tokenCookie = cookieList.get('authToken');
-  console.log("token is :", tokenCookie, tokenCookie?.value);
+  const tokenCookie = cookieList.get("authToken");
 
   const headerList = await headers();
-  const referer = headerList.get('referer');
-  console.log("Referer is :", referer);
-  console.log("User-Agent",headerList.get('user-Agent'));
-  console.log("Host",headerList.get('Host'));
+  const userAgent = headerList.get("user-agent");
+
+  console.log("Token:", tokenCookie?.value);
+  console.log("User-Agent:", userAgent);
 
   return (
-    <div>
-      <GotoCartButton />
-      <h3>Products List</h3>
-      <Link href="#recommended" prefetch={false}>Go to Recommended Section</Link>
-      <Suspense fallback={<span style={{color: 'red'}}>Loading...</span>}>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-end mb-3">
+        <GotoCartButton />
+      </div>
+
+      <h2>🛍️ Products List</h2>
+
+      <Suspense fallback={<span style={{ color: "red" }}>Loading products...</span>}>
         <ProductList />
       </Suspense>
-      
-      <h3 id="recommended">Recommended Products</h3>
-      
+
+      {/* Recommended Products */}
+      <h3 className="mt-5" id="recommended">
+        Recommended Products
+      </h3>
+      <div className="d-flex flex-wrap gap-3">
+        {products.slice(0, 4).map((p: Product) => (
+          <ProductCard key={p.id} product={p} />
+        ))}
+      </div>
     </div>
   );
 }
