@@ -7,7 +7,7 @@ import Image from "next/image";
 export default function HomePage() {
   const router = useRouter();
 
-  // ✅ Redirect to login if no user found in localStorage
+  // Redirect to login if no user found in localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
@@ -22,7 +22,8 @@ export default function HomePage() {
       id: 1,
       name: "Mobiles",
       image: "/images/mobile.webp",
-      description: "Latest smartphones from top brands with great discounts.",
+      description:
+        "Latest smartphones from top brands with great discounts.",
     },
     {
       id: 2,
@@ -34,13 +35,15 @@ export default function HomePage() {
       id: 3,
       name: "Fashion",
       image: "/images/dress.webp",
-      description: "Trendy clothing and accessories for all styles and seasons.",
+      description:
+        "Trendy clothing and accessories for all styles and seasons.",
     },
     {
       id: 4,
       name: "Watches",
       image: "/images/watch.webp",
-      description: "Elegant watches that combine performance with design.",
+      description:
+        "Elegant watches that combine performance with design.",
     },
     {
       id: 5,
@@ -52,13 +55,14 @@ export default function HomePage() {
       id: 6,
       name: "Furniture",
       image: "/images/furniture.webp",
-      description: "Modern and durable furniture to make your home beautiful.",
+      description:
+        "Modern and durable furniture to make your home beautiful.",
     },
   ];
 
   return (
     <div className="min-vh-100 bg-black text-white d-flex flex-column">
-      {/* ✅ Hero Section */}
+      {/* Hero Section */}
       <section
         className="position-relative d-flex align-items-center justify-content-center text-center"
         style={{
@@ -89,7 +93,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ✅ Category Cards Section */}
+      {/* Category Cards Section */}
       <section className="container my-5 flex-grow-1">
         <h2 className="text-center mb-4 fw-bold">🛍️ Top Categories</h2>
         <div className="row g-4">
@@ -130,7 +134,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ✅ Hover effect styling */}
       <style jsx>{`
         .hover-card:hover {
           transform: translateY(-6px);
