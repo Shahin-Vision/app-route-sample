@@ -1,41 +1,38 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     let finalEmail = email.trim();
 
-    // Append @gmail.com if missing
+    // ✅ Auto-append "@gmail.com" if missing
     if (!finalEmail.endsWith("@gmail.com")) {
       finalEmail += "@gmail.com";
     }
 
-    // Basic password validation
+    // ✅ Basic validation
     if (password.trim().length < 4) {
-      setError("Password must be at least 4 characters long");
+      setError("Password must be at least 4 characters long.");
       return;
     }
 
-    // Store user in localStorage and cookie
-    if (mounted && typeof window !== "undefined") {
+    // ✅ Save user info (for basic identification)
+    if (typeof window !== "undefined") {
       localStorage.setItem("user", finalEmail);
       document.cookie = `user=${finalEmail}; path=/; max-age=86400`; // valid for 1 day
     }
 
+    // ✅ Redirect to home after login
     router.push("/");
   };
 
@@ -47,6 +44,7 @@ export default function LoginPage() {
         {error && <div className="alert alert-danger">{error}</div>}
 
         <form onSubmit={handleLogin}>
+          {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
@@ -54,11 +52,15 @@ export default function LoginPage() {
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your E-mail"
+              placeholder="Enter your email"
               required
             />
+            <small className="text-muted">
+              “@gmail.com” will be added automatically if missing.
+            </small>
           </div>
 
+          {/* Password */}
           <div className="mb-3">
             <label className="form-label">Password</label>
             <input
