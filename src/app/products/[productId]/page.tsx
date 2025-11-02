@@ -23,7 +23,6 @@ interface Product {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  // ✅ unwrap params Promise (required in Next.js 15)
   const resolvedParams = use(params);
   const productId = resolvedParams.productId;
 
@@ -43,16 +42,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         setLoading(false);
       }
     };
-
     loadProduct();
   }, [productId]);
-
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart(product);
-      router.push("/carts");
-    }
-  };
 
   if (loading) {
     return (
@@ -76,7 +67,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       <GotoCartButton />
       <div className="row align-items-center">
         <div className="col-md-5 text-center">
-          {/* ✅ Fixed Next.js Image usage */}
           <Image
             src={product.image}
             alt={product.title}
@@ -93,7 +83,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           <p>{product.description}</p>
           <h4 className="fw-bold">Price: ₹{product.price}</h4>
 
-          <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() => {
+              addToCart(product);
+              router.push("/carts");
+            }}
+          >
             Add to Cart
           </button>
         </div>
