@@ -1,68 +1,68 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  description: string;
+}
+
 export default function HomePage() {
-  const router = useRouter();
-
-  // Redirect to login if no user found in localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) {
-        router.replace("/login");
-      }
-    }
-  }, [router]);
-
-  const categories = [
+  const categories: Category[] = [
+    {
+      id: 0,
+      name: "All Products",
+      image: "/images/AllProduct.jpeg",
+      description: "Browse all products available",
+    },
     {
       id: 1,
-      name: "Mobiles",
-      image: "/images/mobile.webp",
-      description:
-        "Latest smartphones from top brands with great discounts.",
+      name: "Jewelery",
+      image: "/images/jewellery.webp",
+      description: "Beautiful and elegant jewelry for all occasions.",
     },
     {
       id: 2,
-      name: "Laptops",
-      image: "/images/laptop.webp",
-      description: "Powerful and stylish laptops for work and entertainment.",
+      name: "Electronics",
+      image: "/images/electronics.jpg",
+      description: "Latest gadgets and electronics with great offers.",
     },
     {
       id: 3,
-      name: "Fashion",
-      image: "/images/dress.webp",
-      description:
-        "Trendy clothing and accessories for all styles and seasons.",
+      name: "Men's Clothing",
+      image: "/images/menscloth.webp",
+      description: "Stylish and comfortable clothing for men.",
     },
     {
       id: 4,
-      name: "Watches",
-      image: "/images/watch.webp",
-      description:
-        "Elegant watches that combine performance with design.",
-    },
-    {
-      id: 5,
-      name: "Shoes",
-      image: "/images/shoes.webp",
-      description: "Comfortable and stylish shoes for every occasion.",
-    },
-    {
-      id: 6,
-      name: "Furniture",
-      image: "/images/furniture.webp",
-      description:
-        "Modern and durable furniture to make your home beautiful.",
+      name: "Women's Clothing",
+      image: "/images/womenscloth.jpg",
+      description: "Trendy fashion wear for women.",
     },
   ];
 
+  // ✅ Utility to make URL-safe category names
+  const formatCategoryName = (name: string) => {
+    // Convert to lowercase and handle special cases
+    const lower = name.toLowerCase();
+    
+    // Map display names to URL-friendly versions
+    if (lower === "all products") return "all-products";
+    if (lower === "jewelery") return "jewelery";
+    if (lower === "electronics") return "electronics";
+    if (lower === "men's clothing") return "mens-clothing";
+    if (lower === "women's clothing") return "womens-clothing";
+    
+    // Default: remove apostrophes and replace spaces with hyphens
+    return lower.replace(/'/g, "").replace(/\s+/g, "-");
+  };
+
   return (
     <div className="min-vh-100 bg-black text-white d-flex flex-column">
-      {/* Hero Section */}
+      {/* 🏷️ Hero Banner */}
       <section
         className="position-relative d-flex align-items-center justify-content-center text-center"
         style={{
@@ -70,8 +70,6 @@ export default function HomePage() {
           backgroundImage: "url('/images/banner.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: "#fff",
         }}
       >
         <div
@@ -84,53 +82,54 @@ export default function HomePage() {
           <p className="lead mb-4">
             Discover amazing deals across every department
           </p>
-          <button
-            className="btn btn-light btn-lg px-4"
-            onClick={() => router.push("/products")}
-          >
+          <Link href="/categories/all-products" className="btn btn-light btn-lg px-4">
             Shop Now
-          </button>
+          </Link>
         </div>
       </section>
 
-      {/* Category Cards Section */}
+      {/* 🛍️ Top Categories Section */}
       <section className="container my-5 flex-grow-1">
         <h2 className="text-center mb-4 fw-bold">🛍️ Top Categories</h2>
-        <div className="row g-4">
-          {categories.map((item) => (
-            <div key={item.id} className="col-6 col-md-2">
-              <div
-                className="card bg-dark text-white shadow-sm border-0 h-100 text-center hover-card"
-                style={{
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  borderRadius: "0.5rem",
-                }}
-              >
-                <div
-                  className="position-relative"
-                  style={{ width: "100%", height: "180px" }}
+        <div className="row g-4 justify-content-center">
+          {categories.map((item) => {
+            const categoryUrl = formatCategoryName(item.name);
+            console.log(`Category: ${item.name} -> URL: /categories/${categoryUrl}`);
+            
+            return (
+              <div key={item.id} className="col-6 col-md-2">
+                <Link
+                  href={`/categories/${categoryUrl}`}
+                  className="text-decoration-none"
                 >
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
+                  <div
+                    className="card bg-dark text-white shadow-sm border-0 h-100 text-center hover-card"
                     style={{
-                      objectFit: "cover",
-                      borderTopLeftRadius: "0.5rem",
-                      borderTopRightRadius: "0.5rem",
+                      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                      borderRadius: "0.5rem",
+                      cursor: "pointer",
                     }}
-                    priority
-                  />
-                </div>
-                <div className="card-body">
-                  <h5 className="card-title text-warning">{item.name}</h5>
-                  <p className="card-text small text-light opacity-75">
-                    {item.description}
-                  </p>
-                </div>
+                  >
+                    <div className="position-relative" style={{ height: "180px" }}>
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: "cover", borderRadius: "0.5rem" }}
+                        priority
+                      />
+                    </div>
+                    <div className="card-body">
+                      <h5 className="card-title text-warning">{item.name}</h5>
+                      <p className="card-text small text-light opacity-75">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

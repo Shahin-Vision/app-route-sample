@@ -15,18 +15,25 @@ export const metadata: Metadata = {
   keywords: ["ecommerce", "nextjs", "shopping", "flipkart clone"],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {/* Context Provider for global cart state */}
         <CartProvider>
-          {/* Navbar */}
+          {/* ✅ Navbar */}
           <Navigation />
 
-          {/* Remove side margins & spacing */}
-          <main className="m-0 p-0">{children}</main>
+          {/* ✅ Page Content */}
+          <main className="m-0 p-0" style={{ paddingTop: "80px" }}>
+            {children}
+          </main>
 
-          {/* Footer (no border or hr) */}
+          {/* ✅ Footer */}
           <Footer />
         </CartProvider>
       </body>

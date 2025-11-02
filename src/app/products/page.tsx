@@ -3,7 +3,6 @@ import { cookies, headers } from "next/headers";
 import { Suspense } from "react";
 import { ProductService } from "../services/product-services";
 import ProductList from "../component/ProductList";
-import ProductCard from "../component/product-card/ProductCard";
 import GotoCartButton from "../component/GotoCartButton";
 
 interface Product {
@@ -12,6 +11,7 @@ interface Product {
   price: number;
   image: string;
   description: string;
+  category: string;
 }
 
 export const metadata: Metadata = {
@@ -47,21 +47,16 @@ export default async function ProductsPage() {
         <GotoCartButton />
       </div>
 
-      <h2>🛍️ Products List</h2>
+      <h2 className="text-center mb-4">🛍️ All Products</h2>
 
-      <Suspense fallback={<span style={{ color: "red" }}>Loading products...</span>}>
-        <ProductList />
+      <Suspense fallback={
+        <div className="text-center my-5">
+          <div className="spinner-border text-primary" role="status"></div>
+          <p className="mt-2">Loading products...</p>
+        </div>
+      }>
+        <ProductList products={products} />
       </Suspense>
-
-      {/* Recommended Products */}
-      <h3 className="mt-5" id="recommended">
-        Recommended Products
-      </h3>
-      <div className="d-flex flex-wrap gap-3">
-        {products.slice(0, 4).map((p: Product) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
     </div>
   );
 }
